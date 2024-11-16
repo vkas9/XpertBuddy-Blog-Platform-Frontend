@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import moment from "moment"; // Use moment.js for relative blog time
+import moment from "moment";
 import { IoShareSocialSharp } from "react-icons/io5";
 import { FaComment } from "react-icons/fa6";
 import { FaCommentSlash } from "react-icons/fa";
@@ -8,8 +8,9 @@ import { FaHeart } from "react-icons/fa";
 import { commentHandler } from "../../../utils/commentHandler";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEdit, FaTrashAlt } from "react-icons/fa";
 import { blogAction } from "@/redux/blogStore";
+import axios from "axios";
 
 const Blog = ({
   blogKey,
@@ -83,10 +84,10 @@ const Blog = ({
 
   const handleEdit = (e) => {
     e.stopPropagation();
-    
+
     dispatch(
       blogAction.setCurrentUpdatingblog({
-        _id:blogKey,
+        _id: blogKey,
         title,
         text: content,
         image,
@@ -97,13 +98,41 @@ const Blog = ({
     dispatch(blogAction.setBlogUpdating(true));
   };
 
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (!token) {
+      toast.error("Must be Logged in");
+      return;
+    }
+  
+    try {
+      
+      const response = await axios.delete(`/api/blogs/${blogId}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+  
+      if (response.status === 200) {
+        toast.success("Blog deleted successfully");
+        
+        dispatch(blogAction.deleteBlog(blogId));
+      } else {
+        toast.error("Failed to delete blog");
+      }
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+      toast.error("An error occurred while deleting the blog");
+    }
+  };
+
   return (
     <div
       onClick={openBlogDetails}
       className="bg-white/10 text-white w-full max-w-[40rem] rounded-lg shadow-lg p-6 mb-4"
     >
-      <div className="flex items-center justify-between mb-4 ">
-        <div className="flex items-center ">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
           <div className="rounded-full h-10 w-10">
             <img
               src={profileImage}
@@ -114,21 +143,30 @@ const Blog = ({
           </div>
           <div className="ml-3">
             <p className="font-bold capitalize">{author}</p>
-            <p className="text-sm flex items-center">
+            <p className="text-sm flex items-start flex-col sm:gap-2 sm:flex-row">
               <span>{moment(blogTime).fromNow()}</span>
+              <span className="max-sm:hidden">|</span>
               {category && (
-                <span className="ml-2 capitalize ">| {category}</span>
+                <span className=" capitalize ">{category}</span>
               )}
             </p>
           </div>
         </div>
         {activeTab === "My Blogs" && (
-          <span
-            onClick={(e) => handleEdit(e)}
-            className=" active:bg-white/10 hover:cursor-pointer  hover:bg-white/10 transition-all duration-150 rounded-full p-2"
-          >
-            <FaRegEdit size={25} />{" "}
-          </span>
+          <div className="flex items-center">
+            <span
+              onClick={(e) => handleEdit(e)}
+              className="active:bg-white/10 hover:cursor-pointer hover:bg-white/10 transition-all duration-150 rounded-full p-2"
+            >
+              <FaRegEdit size={25} />
+            </span>
+            <span
+              onClick={(e) => handleDelete(e)}
+              className="active:bg-white/10 hover:cursor-pointer active:text-red-500 sm:hover:text-red-500 hover:bg-white/10 transition-all duration-150 rounded-full p-2"
+            >
+              <FaTrashAlt size={22} />
+            </span>
+          </div>
         )}
       </div>
       <h2 className="text-2xl font-bold mb-2 capitalize">{title}</h2>
