@@ -113,13 +113,8 @@ const Blog = ({
         },
       });
   
-      if (response.status === 200) {
-        toast.success("Blog deleted successfully");
-        
-        dispatch(blogAction.deleteBlog(blogId));
-      } else {
-        toast.error("Failed to delete blog");
-      }
+      if(response.data.success) toast.success("Blog deleted successfully");
+       
     } catch (error) {
       console.error("Error deleting blog:", error);
       toast.error("An error occurred while deleting the blog");
