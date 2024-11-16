@@ -13,7 +13,7 @@ const ProfileDropdown = () => {
       JSON.stringify({ current: "My Profile" })
     );
     dispatch(blogAction.setActiveTab("My Profile"));
-    navigate("/social-hub");
+    navigate("/social-hub/my-profile");
   };
   return (
     <button
