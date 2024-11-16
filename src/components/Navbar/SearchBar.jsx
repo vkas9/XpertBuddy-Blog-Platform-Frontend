@@ -6,7 +6,7 @@ const SearchBar = () => {
     const navigate=useNavigate();
     const current = location.pathname.split("/")[1];
     const handleChange=()=>{
-        if(current!=="social-hub") navigate("social-hub")
+        if(current!=="social-hub") navigate("social-hub/all-blogs")
 
     }
   return (
