@@ -34,7 +34,7 @@ const Navbar = () => {
               current == "social-hub" ? "bg-white/10" : ""
             } hover:bg-white/10 max-sm:bg-white/10 px-3 py-2 transition-all whitespace-nowrap duration-100`}
           >
-            Blogs Section
+            All Blogs
           </Link>
           <div className="min-h-[44px] w-[1px]  bg-gradient-to-b from-transparent via-white/50 to-transparent"></div>
 

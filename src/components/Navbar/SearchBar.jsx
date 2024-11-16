@@ -13,7 +13,7 @@ const SearchBar = () => {
     <div
       className={`  ${
         isFocused ? "ring-1 border-blue-500 outline-none" : ""
-      }  bg-white/10 pl-4  absolute    left-0 right-0 mx-auto py-1 overflow-hidden gap-2  w-[30%] rounded-full min-h-[35px]  `}
+      }  bg-white/10 pl-4  absolute  max-sm:hidden  left-0 right-0 mx-auto py-1 overflow-hidden gap-2  w-[30%] rounded-full min-h-[35px]  `}
     >
         <input type="text" onChange={handleChange} placeholder='Search Blogs...'  className='bg-transparent text-[1rem] w-full outline-none' />
       

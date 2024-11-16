@@ -13,7 +13,6 @@ const BlogDetails = () => {
   const { blogId } = useParams();
   const dispatch = useDispatch();
   const { allBlog, singleBlog } = useSelector((store) => store.blogStore);
-
   const { userCredentials, token } = useSelector((store) => store.credential);
   let blog;
 
@@ -25,55 +24,44 @@ const BlogDetails = () => {
 
   const [commentText, setCommentText] = useState("");
   const [loading, setLoading] = useState(false);
-
   const [commentList, setCommentList] = useState(blog?.comments || []);
-  const [liked, setLiked] = useState(
-    blog?.likes.includes(userCredentials?._id)
-  );
+  const [liked, setLiked] = useState(blog?.likes.includes(userCredentials?._id));
   const [likes, setLikes] = useState(blog?.likes?.length);
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (true) {
-      const loadBlogs = async () => {
-        setLoading(true);
-        try {
-          const result = await fetchSingleBlog(signal, dispatch, blogId);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching blog:", error);
-          setLoading(false);
-        }
-      };
+    const loadBlogs = async () => {
+      setLoading(true);
+      try {
+        const result = await fetchSingleBlog(signal, dispatch, blogId);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching blog:", error);
+        setLoading(false);
+      }
+    };
 
-      loadBlogs();
-    } else {
-      setLoading(false);
-    }
+    loadBlogs();
 
     return () => {
       controller.abort();
     };
-  }, [blogId, allBlog, dispatch]); // Added allBlog as dependency
+  }, [blogId, allBlog, dispatch]);
 
   const charLimit = 300;
   const [showFullContent, setShowFullContent] = useState(false);
+
   const handleLike = () => {
     if (!token) {
       toast.error("Must be Logged in");
-
       return;
     }
-    // onLikeClick()
-    if (liked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
-    }
+    setLikes(liked ? likes - 1 : likes + 1);
     setLiked(!liked);
   };
+
   const toggleContent = () => {
     setShowFullContent(!showFullContent);
   };
@@ -82,6 +70,7 @@ const BlogDetails = () => {
   const toggleComments = () => {
     setShowComments(!showComments);
   };
+
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!token) {
@@ -94,13 +83,7 @@ const BlogDetails = () => {
         commentedUser: userCredentials._id,
       };
       setCommentList([...commentList, newComment]);
-      await commentHandler(
-        commentText,
-        blogId,
-        allBlog,
-        dispatch,
-        userCredentials
-      );
+      await commentHandler(commentText, blogId, allBlog, dispatch, userCredentials);
       setCommentText("");
     }
   };
@@ -112,15 +95,16 @@ const BlogDetails = () => {
   if (!blog) {
     return <div>Blog not found</div>;
   }
+
   return (
-    <div className=" text-white  w-full h-[calc(100vh-(45px))] sm:h-[calc(100vh-(61px))] flex overflow-y-auto  flex-col rounded-lg shadow-lg py-6 px-[20rem] mb-4 mx-auto">
+    <div className="text-white w-full  h-[calc(100vh-(45px))] sm:h-[calc(100vh-(61px))] flex overflow-y-auto flex-col rounded-lg shadow-lg py-6 px-4 sm:px-6 md:px-10 lg:px-[20rem] mb-4 mx-auto">
       <div className="flex items-center mb-4">
-        <div className="rounded-full h-10 w-10 ">
+        <div className="rounded-full h-10 w-10">
           <img
             src={blog.profileDetail.user_profile_image}
             loading="lazy"
             alt={blog.profileDetail.user_profile_image}
-            className=" h-10 w-10 select-none  pointer-events-none object-cover rounded-full"
+            className="h-10 w-10 object-cover rounded-full"
           />
         </div>
 
@@ -129,7 +113,7 @@ const BlogDetails = () => {
           <p className="text-sm flex items-center">
             <span>{moment(blog.createdAt).fromNow()}</span>
             {blog?.category && (
-              <span className="ml-2 capitalize ">| {blog?.category}</span>
+              <span className="ml-2 capitalize">| {blog?.category}</span>
             )}
           </p>
         </div>
@@ -181,7 +165,7 @@ const BlogDetails = () => {
             {likes} {likes === 1 ? "like" : "likes"}
           </span>
         </div>
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center">
           <button
             className="text-blue-500 text-2xl mr-1"
             onClick={toggleComments}
@@ -191,8 +175,6 @@ const BlogDetails = () => {
           <span className="text-blue-500 mr-2 text-xl">
             ({blog.comments.length})
           </span>
-          {/* <button className="text-blue-500 text-2xl"> <IoShareSocialSharp />
-          </button> */}
         </div>
       </div>
 
@@ -221,6 +203,7 @@ const BlogDetails = () => {
           </div>
         </div>
       )}
+
       {blog?.tags?.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
           {blog.tags.map((tag, index) => (
