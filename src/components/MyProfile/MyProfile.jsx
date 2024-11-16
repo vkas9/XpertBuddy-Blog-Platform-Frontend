@@ -11,7 +11,7 @@ const MyProfile = () => {
   const { token, userCredentials } = useSelector((store) => store.credential);
   const { allBlog, pageReloaded } = useSelector((store) => store.blogStore);
   const handleClick = () => {
-    navigate("settings");
+    navigate("/social-hub/settings");
     localStorage.setItem("active-tab", JSON.stringify({ current: "Setting" }));
     dispatch(blogAction.setActiveTab("Setting"));
   };
